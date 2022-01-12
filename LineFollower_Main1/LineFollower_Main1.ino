@@ -13,7 +13,7 @@ QTRSensors qtr;
 const uint8_t SensorCount = 2;
 uint16_t sensorValues[SensorCount];
 
-//motor variables
+//DC motor variables
 int forwardSpeed=100;
 int turningSpeed=80;
 
@@ -29,14 +29,20 @@ int motor2pin2=5;//fata
 int ledRosuStanga = 53;
 int ledRosuDreapta = 51;
 
+int LEDTimer = 10; //the time,in ms,in which an LED blink takes place
+//currently not used,seems that a delay would be detrimental to the bot's reaction speed
+
 //miscellaneous variables
 direction toMove;
 direction way;
 
+bool doTest = false;  //debug purpose only,should be TRUE by default
+//it controls wether or not the DC motors do a test sequence
+
 void setup() {
   setupLED();
   setupMotors();
-  testMotor();
+  if(doTest == true){testMotor();}
   setupSensors();
 }
 
@@ -163,21 +169,24 @@ void Stop(){
   analogWrite(motor2pin2,0);
 }
 
+//functiile de intoarcere stanga/dreapta sunt construite recursiv pentru a nu fi nevoie parcurgerea intregii functii principale de prea multe ori
 void turnLeft(){
-  Stop();
   analogWrite(motor2pin2,turningSpeed);
-  /*if(way == left){
+  digitalWrite(ledRosuStanga,HIGH);
+  if(way == left){
     way = determineMovement();
+    digitalWrite(ledRosuStanga,LOW);
     turnLeft();
-    }*/
-  return;
+    }
+  digitalWrite(ledRosuStanga,LOW);
 }
 void turnRight(){
-  Stop();
   analogWrite(motor1pin1,turningSpeed);
-  /*if(way == right){
+  digitalWrite(ledRosuDreapta,HIGH);
+  if(way == right){
     way = determineMovement();
+    digitalWrite(ledRosuDreapta,LOW);
     turnRight();
-  }*/
-  return;
+  }
+  digitalWrite(ledRosuDreapta,LOW);
 }
